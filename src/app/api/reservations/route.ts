@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { createReservationSchema } from "@/lib/validations";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 async function checkIdempotency(key: string | null) {
   if (!key) return null;
 

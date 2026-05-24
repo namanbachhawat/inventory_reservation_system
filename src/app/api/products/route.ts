@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // Lazy cleanup: release expired PENDING reservations (fire-and-forget)
 function cleanupExpiredReservations() {
   prisma.reservation
