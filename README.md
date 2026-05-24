@@ -277,22 +277,22 @@ prisma.reservation.findMany({
 
 ### 2. Vercel Cron (explicit)
 
-A dedicated endpoint at `/api/cron/expire-reservations` runs **every 5 minutes** via Vercel Cron:
+A dedicated endpoint at `/api/cron/expire-reservations` runs **once daily** (due to Vercel Hobby plan limitations):
 
 ```json
 // vercel.json
 {
   "crons": [{
     "path": "/api/cron/expire-reservations",
-    "schedule": "*/5 * * * *"
+    "schedule": "0 0 * * *"
   }]
 }
 ```
 
-**Pros**: Guaranteed periodic cleanup regardless of traffic.
-**Cons**: Requires Vercel Pro plan for cron jobs.
+**Pros**: Guaranteed daily cleanup regardless of traffic.
+**Cons**: Limited to once a day on the Hobby plan (requires Vercel Pro for more frequent schedules, e.g., every 5 minutes).
 
-Both approaches run the same cleanup logic. Together, they ensure expired reservations are released promptly.
+Both approaches run the same cleanup logic. Together, they ensure expired reservations are released. Note that the **lazy expiry** mechanism still runs on every product fetch, ensuring real-time cleanup for active users even without frequent cron jobs.
 
 ---
 
