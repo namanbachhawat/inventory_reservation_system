@@ -300,100 +300,115 @@ export default function HomePage() {
 
       {/* Product Cards */}
       {products && (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => {
-            const totalAvailable = product.inventory.reduce(
-              (sum, inv) => sum + inv.available,
-              0
-            );
-            const totalStock = product.inventory.reduce(
-              (sum, inv) => sum + inv.total,
-              0
-            );
+        products.length === 0 ? (
+          <div className="text-center py-16 bg-accent/15 border border-muted rounded-2xl max-w-xl mx-auto px-6">
+            <svg className="w-12 h-12 text-muted-foreground mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <h3 className="text-lg font-semibold text-foreground">No Products Found</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Your database schema is set up, but there is no data in it. You need to seed your database to see products.
+            </p>
+            <div className="mt-6 p-3 bg-black/40 rounded-lg font-mono text-xs text-left inline-block">
+              npx prisma db seed
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => {
+              const totalAvailable = product.inventory.reduce(
+                (sum, inv) => sum + inv.available,
+                0
+              );
+              const totalStock = product.inventory.reduce(
+                (sum, inv) => sum + inv.total,
+                0
+              );
 
-            return (
-              <Card
-                key={product.id}
-                className="group hover:glow transition-all duration-300 hover:border-primary/30"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                        {product.name}
-                      </CardTitle>
-                      <CardDescription className="mt-1">
-                        {product.description}
-                      </CardDescription>
+              return (
+                <Card
+                  key={product.id}
+                  className="group hover:glow transition-all duration-300 hover:border-primary/30"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                          {product.name}
+                        </CardTitle>
+                        <CardDescription className="mt-1">
+                          {product.description}
+                        </CardDescription>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="font-mono text-xs shrink-0"
+                      >
+                        {product.sku}
+                      </Badge>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="font-mono text-xs shrink-0"
-                    >
-                      {product.sku}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-4 pt-2">
-                    <div className="text-sm">
-                      <span className="text-muted-foreground">Total: </span>
-                      <span className="font-semibold text-emerald-400">
-                        {totalAvailable}
-                      </span>
-                      <span className="text-muted-foreground">
-                        /{totalStock} available
-                      </span>
+                    <div className="flex items-center gap-4 pt-2">
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Total: </span>
+                        <span className="font-semibold text-emerald-400">
+                          {totalAvailable}
+                        </span>
+                        <span className="text-muted-foreground">
+                          /{totalStock} available
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="hover:bg-transparent">
-                        <TableHead className="text-xs">Warehouse</TableHead>
-                        <TableHead className="text-xs">Stock</TableHead>
-                        <TableHead className="text-xs text-right">
-                          Action
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {product.inventory.map((inv) => (
-                        <TableRow
-                          key={inv.warehouseId}
-                          className="hover:bg-accent/50"
-                        >
-                          <TableCell className="text-sm font-medium">
-                            {inv.warehouseName}
-                          </TableCell>
-                          <TableCell>
-                            <StockBar
-                              available={inv.available}
-                              total={inv.total}
-                            />
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              size="sm"
-                              variant={inv.available > 0 ? "default" : "outline"}
-                              disabled={inv.available === 0}
-                              onClick={() => {
-                                setSelectedProduct(product);
-                                setSelectedWarehouse(inv);
-                              }}
-                              className="text-xs"
-                            >
-                              {inv.available > 0 ? "Reserve" : "Out of Stock"}
-                            </Button>
-                          </TableCell>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="hover:bg-transparent">
+                          <TableHead className="text-xs">Warehouse</TableHead>
+                          <TableHead className="text-xs">Stock</TableHead>
+                          <TableHead className="text-xs text-right">
+                            Action
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                      </TableHeader>
+                      <TableBody>
+                        {product.inventory.map((inv) => (
+                          <TableRow
+                            key={inv.warehouseId}
+                            className="hover:bg-accent/50"
+                          >
+                            <TableCell className="text-sm font-medium">
+                              {inv.warehouseName}
+                            </TableCell>
+                            <TableCell>
+                              <StockBar
+                                available={inv.available}
+                                total={inv.total}
+                              />
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                size="sm"
+                                variant={inv.available > 0 ? "default" : "outline"}
+                                disabled={inv.available === 0}
+                                onClick={() => {
+                                  setSelectedProduct(product);
+                                  setSelectedWarehouse(inv);
+                                }}
+                                className="text-xs"
+                              >
+                                {inv.available > 0 ? "Reserve" : "Out of Stock"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )
       )}
 
       {/* Reservation Modal */}
